@@ -42,8 +42,28 @@ Unsuprisingly, GPM (Gallon per Miles) is very highly negatively correlated with 
 lmModel <- lm(GPM ~ WT + DIS + NC + HP + ET, data = fuelData)
 ```
 
-
 ### Model assessment
+cross-validation
+```{r}
+n <- nrow(fuelData)
+diff <- vector(mode = numeric, length = n)
+
+for (i in 1:n){
+  train <- fuelData[-i,]
+  test <- fuelData[i,]
+  
+  model <- lm(GPM ~ WT + DIS + NC + HP + ACC + ET, data = train)
+  yPredict <- predict(model, test)
+  y <- test$GPM
+  diff[i] <- yPredict - y
+}
+
+mean(diff)
+RMSE <- sqrt(sum(diff^2)/length(diff))
+```
+
+
+
 ```{r}
 summary(lmModel)
 ```
