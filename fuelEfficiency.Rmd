@@ -46,7 +46,7 @@ lmModel <- lm(GPM ~ WT + DIS + NC + HP + ET, data = fuelData)
 cross-validation
 ```{r}
 n <- nrow(fuelData)
-diff <- vector(mode = numeric, length = n)
+diff <- vector(mode = "numeric", length = n)
 
 for (i in 1:n){
   train <- fuelData[-i,]
@@ -60,6 +60,7 @@ for (i in 1:n){
 
 mean(diff)
 RMSE <- sqrt(sum(diff^2)/length(diff))
+RMSE
 ```
 
 
