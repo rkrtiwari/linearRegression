@@ -12,6 +12,7 @@ In this analysis, I am going to build a linear regression model to predict the f
 Load the required libraries
 ```{r}
 library(corrplot)
+library(lars)
 ```
 
 Load the dataset
@@ -92,6 +93,20 @@ abline(a = 0, b = 1, col = "blue")
 ```
 
 The above plot shows that the relationship between the predicted and the actual value is linear with slope 1. This once again clearly shows that the linear regression model is able to describe out data very well.
+
+### Lasso
+```{r}
+x <- model.matrix(GPM ~ WT + DIS + NC + HP + ACC + ET, data = fuelData)
+x <- x[,-1]
+lassoModel <- lars(x = x, y = fuelData$GPM, trace = TRUE)
+plot(lassoModel)
+lassoModel
+cv.lars(x=x, y = fuelData$GPM, K = 10)
+coef(lassoModel, s = c(0.25, 0.50, 0.75, 1.0), mode = "fraction")
+coef(lassoModel, s = c(0.35, 0.4, 0.6), mode = "fraction")
+```
+
+
 
 
 
