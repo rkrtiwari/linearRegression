@@ -1,0 +1,77 @@
+---
+title: "Fuel Efficiency Analysis Using Linear Regression"
+author: "Ravi Kumar Tiwari"
+date: "14 June 2016"
+output: html_document
+---
+
+### Introduction
+In this analysis, I am going to build a linear regression model to predict the fuel efficiency of a car based on its characteristics such as its weight, horsepower, cylinder displacement. 
+
+### Data Exploration
+Load the required libraries
+```{r}
+library(corrplot)
+```
+
+Load the dataset
+```{r}
+fuelData <- read.table("FuelEfficiency.csv", sep = ",", header = TRUE)
+```
+
+Look at the data set summary
+```{r}
+names(fuelData)
+dim(fuelData)
+str(fuelData)
+summary(fuelData)
+```
+
+I am interested in knowing the relationship between MPG (Miles per Gallon) with rest of the variables. First of all, I look at the correlation of MPG with all other variables  
+
+```{r}
+corVal <- cor(fuelData)
+corrplot(corVal)
+corVal[,1]
+```
+
+Unsuprisingly, GPM (Gallon per Miles) is very highly negatively correlated with MPG (Miles per Gallon) as by definition they are inverse of each other. I will therefore use only one of them in my model. I chose GPM because of its positive correlation with other variables which makes interpretation easy. Also, I leave out ACC variable in my model as it is uncorrelated with GPM. 
+
+### Model building
+```{r}
+lmModel <- lm(GPM ~ WT + DIS + NC + HP + ET, data = fuelData)
+```
+
+
+### Model assessment
+```{r}
+summary(lmModel)
+```
+
+All the variables in my model are significant as can be seen from there p-values. Also, my model is able to explain 93.38% variation in the dependent variable which can be inferred from the model r-squared value of 0.9338. Let us know look at the residual to determine if there are any systematic  error in our model.
+
+```{r}
+lmModel$residuals
+plot(lmModel$residuals, ylab = "Residual", col = "red", pch=19, main = "Residual Plot")
+abline(h=0, col = "blue")
+```
+
+In the Residual Plot shown above, the residuals are randomly scattered around the y = 0 line. This tells that there is no systematic error in the model.
+
+### Model Prediction
+
+I am going to make prediction using our model on the training data itself. It should be noted that prediction error on the training data is optimistic estimated of the error. For more accurate estimate of the error we should calculate error on the test data (the data that was not used in the model building). Since, I has only 38 observations, I chose not to divide the data into train and test set. 
+
+```{r}
+newData <- subset(fuelData, select = -c(MPG, ACC))
+yPred <- predict(lmModel, newdata = newData)
+plot(fuelData$GPM, fuelData$WT)
+y <- fuelData[,2]
+plot(y, yPred, col = "red", pch = 19)
+abline(a = 0, b = 1, col = "blue")
+```
+
+The above plot shows that the relationship between the predicted and the actual value is linear with slope 1. This once again clearly shows that the linear regression model is able to describe out data very well.
+
+
+
