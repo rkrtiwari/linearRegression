@@ -2,7 +2,7 @@
 title: "Fuel Efficiency Analysis Using Linear Regression"
 author: "Ravi Kumar Tiwari"
 date: "14 June 2016"
-output: html_document
+output: pdf_document
 ---
 
 ### Introduction
@@ -65,7 +65,6 @@ I am going to make prediction using our model on the training data itself. It sh
 ```{r}
 newData <- subset(fuelData, select = -c(MPG, ACC))
 yPred <- predict(lmModel, newdata = newData)
-plot(fuelData$GPM, fuelData$WT)
 y <- fuelData[,2]
 plot(y, yPred, col = "red", pch = 19)
 abline(a = 0, b = 1, col = "blue")
